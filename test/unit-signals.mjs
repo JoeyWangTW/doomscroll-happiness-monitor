@@ -1,0 +1,13 @@
+import { newWindow, accumulate, flush } from '../src/offscreen/signals.js';
+const assert = (c, m) => { if (!c) { console.error('FAIL', m); process.exitCode = 1; } else console.log('ok', m); };
+const cat = (o) => ({ faceBlendshapes: [{ categories: Object.entries(o).map(([categoryName, score]) => ({ categoryName, score })) }], facialTransformationMatrixes: [{ data: [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1] }] });
+const w = newWindow();
+const open = cat({ eyeBlinkLeft: 0.05, eyeBlinkRight: 0.05, browDownLeft: 0.2, browDownRight: 0.4 });
+const closed = cat({ eyeBlinkLeft: 0.9, eyeBlinkRight: 0.8 });
+for (const r of [open, open, closed, closed, open, open, closed, open, { faceBlendshapes: [] }]) accumulate(w, r);
+const out = flush(w);
+assert(out.samples === 9 && out.faceSamples === 8, `samples ${out.samples}/${out.faceSamples}`);
+assert(out.blinks === 2, `blinks counted with hysteresis: ${out.blinks}`);
+assert(Math.abs(out.browDown - (0.3 * 5) / 8) < 1e-9, `browDown mean ${out.browDown}`);
+assert(out.facePresence === 8 / 9, 'face presence');
+assert(out.blinkRate > 0 && out.lookAway === 0, `blinkRate ${out.blinkRate.toFixed(1)}/min lookAway ${out.lookAway}`);
