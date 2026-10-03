@@ -1,0 +1,4 @@
+.wrap.narrow { max-width:820px; }
+.btnlink { font:inherit; padding:7px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink); text-decoration:none; }
+#camMsg { margin:10px 0 0; display:block; }
+#camStatus { flex:1; }

@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings · Doomscroll Happiness Monitor</title>
+<link rel="stylesheet" href="../dashboard/dashboard.css">
+<link rel="stylesheet" href="settings.css">
+</head>
+<body>
+<div class="wrap narrow">
+  <header class="top">
+    <div class="brand"><img src="../../icons/icon32.png" alt="" width="24" height="24"><h1>Settings</h1></div>
+    <a class="btnlink" id="toDashboard" href="../dashboard/dashboard.html">← Dashboard</a>
+  </header>
+
+  <section class="card" id="trackedCard">
+    <div class="cardHead">
+      <h2>Tracked sites</h2>
+      <span class="muted">Sessions, webcam capture and screenshots only run on these domains. Subdomains match.</span>
+    </div>
+    <div class="chips" id="domainChips"></div>
+    <form class="row" id="addDomainForm">
+      <input type="text" id="addDomainInput" placeholder="e.g. news.ycombinator.com" spellcheck="false" autocomplete="off">
+      <button type="submit" class="primary">Add site</button>
+      <button type="button" class="ghost" id="resetDomains">Reset to defaults</button>
+      <span class="muted" id="domainMsg"></span>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Camera</h2>
+    <div class="row">
+      <span id="camStatus"></span>
+      <button class="primary" id="camGrant">Allow camera</button>
+      <button id="camTest" class="ghost">Test detection</button>
+      <button id="camUndismiss" class="ghost" hidden>Show banner again</button>
+    </div>
+    <div class="muted" id="camCause"></div>
+    <div class="banner" id="camMsg" hidden></div>
+    <div id="camTestOut" class="camTest" hidden><video id="camVideo" autoplay playsinline muted></video><div id="camTestText" class="muted"></div></div>
+    <div class="muted" id="modelInfo"></div>
+    <div class="muted mono" id="camDiag"></div>
+  </section>
+
+  <section class="card">
+    <h2>Capture</h2>
+    <div class="settingsGrid">
+      <label class="check"><input type="checkbox" id="sEnabled"> Tracking enabled</label>
+      <div class="row3">
+        <label>Frame every <input type="number" id="sInterval" min="1" max="60" step="0.5"> s</label>
+        <label>Close session after <input type="number" id="sGrace" min="5" max="600"> s away</label>
+        <label>Idle after <input type="number" id="sIdle" min="15" max="1800"> s of no input</label>
+      </div>
+      <div class="row3">
+        <label>Keep a session only if it lasts at least <input type="number" id="sMinSession" min="5" max="3600"> s</label>
+        <span class="muted">shorter visits are discarded together with their frames</span>
+      </div>
+      <div class="row3">
+        <label class="check"><input type="checkbox" id="sThumbs"> Keep webcam thumbnails</label>
+        <label>Thumbnail width <input type="number" id="sThumbSize" min="48" max="640"> px</label>
+      </div>
+      <div class="row3">
+        <label class="check"><input type="checkbox" id="sScreen"> Screenshot the page at each frame</label>
+        <label>Screenshot width <input type="number" id="sScreenWidth" min="160" max="1600"> px</label>
+      </div>
+      <div class="muted" id="screenInfo"></div>
+      <h3>Models</h3>
+      <div class="row3">
+        <label class="check"><input type="checkbox" id="sHse"> HSEmotion (AffectNet EfficientNet-B0, valence/arousal)</label>
+        <label>Mood line uses <select id="sMoodSource"><option value="valence">HSEmotion valence</option><option value="faceapi">face-api expression formula</option></select></label>
+      </div>
+      <div class="row3">
+        <label class="check"><input type="checkbox" id="sSignals"> Face signals (MediaPipe landmarks at 10 fps: blinks, brow, lips, gaze, head pose)</label>
+      </div>
+      <div class="muted">face-api (tiny detector + expression net) always runs; it provides the face box. All models run locally on this machine.</div>
+      <div class="actions"><button class="primary" id="sSave">Save</button><span id="sSaved" class="muted"></span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Data</h2>
+    <p class="muted">Everything is stored in this extension's IndexedDB on this computer. Nothing is uploaded.</p>
+    <div class="row"><span id="dataStats" class="muted"></span></div>
+    <div class="row">
+      <button id="exportBtn">Export JSON (scores, no images)</button>
+      <button id="deleteAllBtn" class="danger">Delete everything</button>
+    </div>
+  </section>
+
+  <footer class="muted" id="footer"></footer>
+</div>
+<script type="module" src="settings.js"></script>
+</body>
+</html>

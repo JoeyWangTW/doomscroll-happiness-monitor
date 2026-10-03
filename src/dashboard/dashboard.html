@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doomscroll Happiness Monitor</title>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><img src="../../icons/icon32.png" alt="" width="24" height="24"><h1>Happiness Monitor</h1><span class="pill" id="livePill" hidden>● live</span></div>
+    <div class="datenav">
+      <button id="prevDay" title="Previous day">‹</button>
+      <button id="todayBtn" class="daylabel">Today</button>
+      <button id="nextDay" title="Next day">›</button>
+    </div>
+    <button id="deleteDayBtn" class="ghost danger" title="Delete all sessions of the shown day">Delete day</button>
+    <a id="settingsLink" class="btnlink" href="../settings/settings.html">Settings</a>
+  </header>
+
+  <section class="banner" id="cameraBanner" hidden>
+    <div><strong>Camera access needed.</strong> <span id="cameraBannerText">Emotion tracking only works after you allow the webcam once. Time on site is tracked either way.</span> <span class="muted" id="cameraBannerCause"></span></div>
+    <button class="primary" id="cameraBannerBtn">Allow camera</button>
+    <a class="btnlink" href="../settings/settings.html">Camera settings</a>
+    <button class="ghost" id="cameraBannerDismiss" title="Hide this banner">Dismiss</button>
+  </section>
+
+  <section class="tiles" id="tiles"></section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Time by site</h2>
+      <div id="bySite" class="bars"></div>
+    </div>
+    <div class="card">
+      <div class="cardHead">
+        <h2 id="sessionsTitle">Sessions</h2>
+        <div class="tabs" id="listModeTabs" title="Group sessions that follow each other closely into one block">
+          <button class="tab" data-mode="sessions">Sessions</button>
+          <button class="tab" data-mode="groups">Grouped</button>
+        </div>
+        <label class="muted" id="gapLabel">gap ≤ <select id="gapSelect"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="120">2 h</option></select></label>
+      </div>
+      <div id="sessions" class="sessions"></div>
+    </div>
+  </section>
+
+  <section class="card" id="detail" hidden>
+    <div class="detailHead">
+      <div>
+        <h2 id="dTitle"></h2>
+        <div class="muted" id="dSub"></div>
+      </div>
+      <div class="detailStats" id="dStats"></div>
+      <div class="row">
+        <button class="ghost danger" id="dDelete">Delete session</button>
+      </div>
+    </div>
+    <div class="galleryHead">
+      <h3>Mood over time <span class="muted" id="dLegend"></span></h3>
+      <div class="tabs" id="moodSourceTabs" title="Which model's output the mood line uses">
+        <button class="tab" data-source="valence">Valence (HSEmotion)</button>
+        <button class="tab" data-source="faceapi">Expression formula (face-api)</button>
+      </div>
+    </div>
+    <div class="playerRow">
+      <div class="chartCol">
+        <div class="chart" id="moodChart"></div>
+        <div class="muted">Hover for values · click or drag on the chart to scrub · space plays/pauses · ← → step frames</div>
+      </div>
+      <div class="viewer" id="viewer">
+        <div class="viewerImgs" id="viewerImgs"><div class="slot" id="slotScreen" hidden></div><div class="slot" id="slotFace" hidden></div><div class="muted" id="viewerEmpty">No frame selected</div></div>
+        <div class="viewerCap" id="viewerCap"></div>
+        <div class="transport">
+          <button id="pPrev" title="Previous frame (←)">⏮</button>
+          <button id="pPlay" class="primary" title="Play / pause (space)">▶ Play</button>
+          <button id="pNext" title="Next frame (→)">⏭</button>
+          <select id="pFps" title="Playback speed"><option value="2">2 fps</option><option value="5">5 fps</option><option value="10" selected>10 fps</option><option value="15">15 fps</option><option value="24">24 fps</option></select>
+          <span class="muted" id="pPos"></span>
+        </div>
+        <div class="transport">
+          <div class="tabs" id="viewerTabs">
+            <button class="tab" data-view="both">Both</button>
+            <button class="tab" data-view="screen">Screen</button>
+            <button class="tab" data-view="face">Webcam</button>
+          </div>
+          <button id="pEnlarge" class="ghost">Enlarge</button>
+        </div>
+      </div>
+    </div>
+    <h3>Signals <span class="muted">per capture interval · hover for values</span></h3>
+    <div class="signals" id="signals"></div>
+    <div class="grid2 tight">
+      <div>
+        <h3>Expression mix <span class="muted">avg probability</span></h3>
+        <div id="exprMix" class="bars"></div>
+      </div>
+      <div>
+        <h3>Activity <span class="muted">scroll px per minute</span></h3>
+        <div class="chart small" id="activityChart"></div>
+        <div class="muted" id="activitySummary"></div>
+      </div>
+    </div>
+    <div class="galleryHead">
+      <h3>Frames <span class="muted" id="thumbsNote"></span></h3>
+      <div class="tabs" role="tablist" id="galleryTabs">
+        <button class="tab" data-view="both" role="tab">Side by side</button>
+        <button class="tab" data-view="screen" role="tab">Screen</button>
+        <button class="tab" data-view="face" role="tab">Webcam</button>
+      </div>
+      <button id="tlToggle">Export timelapse</button>
+    </div>
+    <div class="tlPanel" id="tlPanel" hidden>
+      <div class="row">
+        <span>Include:</span>
+        <label class="check"><input type="radio" name="tlMode" value="both" checked> Screen + webcam</label>
+        <label class="check"><input type="radio" name="tlMode" value="screen"> Screen only</label>
+        <label class="check"><input type="radio" name="tlMode" value="face"> Webcam only</label>
+        <label>Speed <select id="tlFps"><option value="5">5 frames/s</option><option value="10" selected>10 frames/s</option><option value="15">15 frames/s</option><option value="24">24 frames/s</option></select></label>
+        <button class="primary" id="tlStart">Render video</button>
+        <button id="tlCancel" hidden>Cancel</button>
+        <span class="muted" id="tlStatus"></span>
+      </div>
+      <div class="muted">Rendering happens in this page in real time, so a 1,200-frame session takes about 2 minutes at 10 frames/s. Keep this tab open. Output is saved as a video file in your Downloads.</div>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="row"><button id="thumbsAll" class="ghost" hidden></button><span class="muted">Click a frame to show it in the player · double-click to enlarge.</span></div>
+  </section>
+
+  <footer class="muted" id="footer">Local only · face-api.js (tiny face detector + expression net) · mood = happy + 0.3·surprised − sad − angry − disgusted − 0.7·fearful</footer>
+</div>
+<div id="tooltip" class="tooltip" hidden></div>
+<div id="lightbox" class="lightbox" hidden><div class="lbInner"><div class="lbImgs"><img id="lbScreen" alt=""><img id="lbFace" alt=""></div><div class="lbCap" id="lbCap"></div><div class="muted">Click anywhere to close · ← → to move</div></div></div>
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>
