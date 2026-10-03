@@ -12,6 +12,12 @@ const view = { day: dayKey(), selected: null, rows: [], gallery: 'both', showAll
 const PAGE_SIZE = 10;
 try { view.listMode = localStorage.getItem('listMode') || 'sessions'; view.gapMin = Number(localStorage.getItem('gapMin')) || 15; } catch { view.listMode = 'sessions'; view.gapMin = 15; }
 try { view.gallery = localStorage.getItem('galleryView') || 'both'; } catch {}
+// Deep link from the Insights page: ?day=YYYY-MM-DD&session=<id>
+{
+  const q = new URLSearchParams(location.search);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(q.get('day') || '')) view.day = q.get('day');
+  if (q.get('session')) { view.selected = { session: { id: q.get('session') } }; view.listMode = 'sessions'; }
+}
 let objectUrls = [];
 
 // ---------------- boot ----------------

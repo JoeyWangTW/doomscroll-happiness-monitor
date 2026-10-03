@@ -5,7 +5,8 @@
   "scripts": {
     "unit": "node unit.mjs",
     "e2e": "node e2e.mjs",
-    "settings": "node settings.mjs"
+    "settings": "node settings.mjs",
+    "insights": "node insights.mjs && node unit-insights.mjs"
   },
   "devDependencies": {
     "puppeteer": "^24"

@@ -7,6 +7,7 @@ const $ = (s) => document.querySelector(s);
 const send = (msg) => chrome.runtime.sendMessage({ ...msg, target: 'background' });
 
 $('#openDash').addEventListener('click', () => openDashboard(''));
+$('#openInsights').addEventListener('click', () => openPage('src/insights/insights.html'));
 $('#openSettings').addEventListener('click', () => openPage('src/settings/settings.html'));
 $('#cameraBtn').addEventListener('click', () => openPage('src/settings/settings.html'));
 $('#enabled').addEventListener('change', async (e) => { await send({ type: 'set-enabled', enabled: e.target.checked }); refresh(); });

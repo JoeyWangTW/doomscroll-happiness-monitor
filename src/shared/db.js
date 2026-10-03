@@ -104,3 +104,4 @@ export function sessionsInRange(startMs, endMs) {
 export const framesForSession = (sessionId) => getAllByIndex('frames', 'sessionId', sessionId);
 export const activityForSession = (sessionId) => getAllByIndex('activity', 'sessionId', sessionId);
 export const openSessions = () => getAllByIndex('sessions', 'open', 1);
+export const framesInRange = (startMs, endMs) => getAllByIndex('frames', 'ts', IDBKeyRange.bound(startMs, endMs, false, true));

@@ -47,6 +47,21 @@ Chrome 116+ is required (offscreen documents + `runtime.getContexts`).
 - **Session detail**: a mood-source toggle (HSEmotion valence / face-api formula), then the mood line (5-frame rolling mean, blue above zero / red below) doubles as a timeline. Hovering shows time, mood and top expressions; clicking or dragging scrubs a **player** beside the chart that shows the screenshot and webcam frame for that moment, with play/pause at 2-24 fps, frame stepping (← →, space), a Both/Screen/Webcam toggle and Enlarge. Below: a **Signals** grid of small charts (arousal, blink rate, brow furrow, lip press, looking away, face size), expression mix, scroll activity per minute, and a frame gallery with the same three views (click a frame to jump the player there, double-click to enlarge). **Export timelapse** lives in the gallery header.
 - **Timelapse** button on every session row, and **Export timelapse** in the detail panel.
 
+## Insights page
+
+`src/insights/insights.html`, reachable from the **Insights** tab in the dashboard header and the popup. It looks across days instead of one day at a time.
+
+- **Filters** (one sticky row, applied to everything below): time frame (today, 7 / 30 / 90 days, all, custom dates), sites (multi-select), every day / weekdays / weekends, time of day (morning, afternoon, evening, night, by session start), and mood source (HSEmotion valence or the face-api formula). The choices are remembered.
+- **Tiles**: total time with change vs. the previous period, per-day average, doomscroll time, longest sitting, average mood, mood drift within doomscrolls.
+- **Time per day** (per hour for a single day), stacked by site or as a total. Each site keeps the same color everywhere based on its all-time rank; sites past the 7th share an "Other" color.
+- **When you scroll**: weekday × hour heatmap of time spent or average mood, with per-hour totals on top and per-weekday totals on the right.
+- **Mood over time**: daily averages with a 7-day rolling mean and the weekly trend.
+- **Does mood drop the longer you scroll?**: mood by minutes into a sitting, either absolute or relative to that sitting's own first 5 minutes.
+- **Sittings**: sessions merged across short gaps (5-30 min, adjustable). A sitting counts as doomscrolling once it reaches 15-90 min (adjustable). A scatter of sitting length vs. mood change and a list of the longest sittings; clicking either opens that session on the day dashboard (`dashboard.html?day=YYYY-MM-DD&session=<id>`).
+- **Sites table**: time, share, sessions, average and longest session, doomscroll time, average mood and in-session drift. It sorts by any column; clicking a row filters the page to that site.
+
+The aggregation lives in `src/shared/insights.js` (no DOM, unit tested in `test/unit-insights.mjs`).
+
 ## Settings page
 
 Its own page (`src/settings/settings.html`, also the extension's options page):
@@ -89,6 +104,7 @@ src/offscreen/             webcam capture + inference
 src/content/activity.js    scroll/click/key counters
 src/popup/                 status popup
 src/dashboard/             dashboard (charts, session detail, timelapse export)
+src/insights/              insights page (trends across days, filters, heatmap, sittings)
 src/settings/              settings page (tracked sites, camera, capture, data) — also the options page
 src/shared/                db.js (IndexedDB), mood.js (scoring), settings.js, camera.js, format.js
 ```
@@ -103,6 +119,7 @@ npm run e2e                   # loads the extension headless with a fake webcam,
                               # timelapses in all three modes, screenshots to test/out/
 npm run settings              # settings page: domain add/remove/reset, camera grant/dismiss flows, popup
 node unit-signals.mjs         # blink counting / signal aggregation
+npm run insights              # insights page with 30 days of synthetic data + aggregation unit tests
 ```
 
 ## License

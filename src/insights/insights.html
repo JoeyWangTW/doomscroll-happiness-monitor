@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insights · Happiness Monitor</title>
+<link rel="stylesheet" href="../dashboard/dashboard.css">
+<link rel="stylesheet" href="insights.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><img src="../../icons/icon32.png" alt="" width="24" height="24"><h1>Happiness Monitor</h1></div>
+    <nav class="tabs pagetabs">
+      <a class="tab" href="../dashboard/dashboard.html">Day</a>
+      <a class="tab active" href="insights.html" aria-current="page">Insights</a>
+    </nav>
+    <a class="btnlink" href="../settings/settings.html">Settings</a>
+  </header>
+
+  <section class="filters" id="filters">
+    <div class="tabs" id="rangeTabs" title="Time frame">
+      <button class="tab" data-range="today">Today</button>
+      <button class="tab" data-range="7d">7 days</button>
+      <button class="tab" data-range="30d">30 days</button>
+      <button class="tab" data-range="90d">90 days</button>
+      <button class="tab" data-range="all">All</button>
+      <button class="tab" data-range="custom">Custom</button>
+    </div>
+    <span class="custom" id="customRange" hidden>
+      <input type="date" id="fromDate" aria-label="From"> – <input type="date" id="toDate" aria-label="To">
+    </span>
+    <details class="dropdown" id="siteDrop">
+      <summary id="siteSummary">All sites</summary>
+      <div class="dropPanel">
+        <div class="row"><button class="ghost small" id="sitesAll">All</button><button class="ghost small" id="sitesNone">None</button></div>
+        <div id="siteList"></div>
+      </div>
+    </details>
+    <select id="daysSel" title="Days of the week">
+      <option value="all">Every day</option>
+      <option value="weekdays">Weekdays</option>
+      <option value="weekends">Weekends</option>
+    </select>
+    <select id="todSel" title="Time of day (by session start)">
+      <option value="all">Any time</option>
+      <option value="morning">Morning 5–12</option>
+      <option value="afternoon">Afternoon 12–17</option>
+      <option value="evening">Evening 17–22</option>
+      <option value="night">Night 22–5</option>
+    </select>
+    <div class="tabs" id="sourceTabs" title="Which model's output mood uses">
+      <button class="tab" data-source="valence">Valence</button>
+      <button class="tab" data-source="faceapi">face-api</button>
+    </div>
+    <span class="muted" id="rangeLabel"></span>
+  </section>
+
+  <main id="main">
+    <section class="tiles" id="tiles"></section>
+
+    <section class="card">
+      <div class="cardHead">
+        <h2 id="timeTitle">Time on tracked sites</h2>
+        <div class="tabs" id="timeTabs">
+          <button class="tab" data-mode="stack">By site</button>
+          <button class="tab" data-mode="total">Total</button>
+        </div>
+        <span class="muted" id="timeNote"></span>
+      </div>
+      <div class="legend" id="timeLegend"></div>
+      <div class="chart" id="timeChart"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardHead">
+        <h2>When you scroll</h2>
+        <div class="tabs" id="heatTabs">
+          <button class="tab" data-metric="time">Time spent</button>
+          <button class="tab" data-metric="mood">Average mood</button>
+        </div>
+        <span class="muted" id="heatNote"></span>
+      </div>
+      <div id="heatmap" class="heatmap"></div>
+      <div class="heatLegend" id="heatLegend"></div>
+    </section>
+
+    <section class="grid2 even">
+      <div class="card">
+        <div class="cardHead"><h2 id="moodTitle">Mood over time</h2><span id="moodTrend" class="trendText"></span></div>
+        <div class="chart" id="moodChart"></div>
+        <div class="muted" id="moodNote"></div>
+      </div>
+      <div class="card">
+        <div class="cardHead">
+          <h2>Does mood drop the longer you scroll?</h2>
+          <div class="tabs" id="minuteTabs">
+            <button class="tab" data-mode="chg">Change from start</button>
+            <button class="tab" data-mode="abs">Absolute</button>
+          </div>
+        </div>
+        <div class="chart" id="minuteChart"></div>
+        <div class="muted" id="minuteNote"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHead">
+        <h2>Sittings</h2>
+        <label class="muted">doomscroll = sitting ≥
+          <select id="doomSel"><option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option><option value="90">90 min</option></select></label>
+        <label class="muted">merge sessions with gaps ≤
+          <select id="gapSel"><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="30">30 min</option></select></label>
+      </div>
+      <div class="grid2 even tight0">
+        <div>
+          <h3>Length vs. mood change <span class="muted">each dot is a sitting · click to open it</span></h3>
+          <div class="chart" id="scatter"></div>
+        </div>
+        <div>
+          <h3>Longest sittings</h3>
+          <div id="longest" class="sessions"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHead"><h2>Sites</h2><span class="muted">click a column to sort · time and mood for the filtered range</span></div>
+      <div id="siteTable" class="sessions"></div>
+    </section>
+  </main>
+
+  <footer class="muted" id="footer">Local only · everything on this page is computed in your browser from the extension's IndexedDB</footer>
+</div>
+<div id="tooltip" class="tooltip" hidden></div>
+<script type="module" src="insights.js"></script>
+</body>
+</html>
